@@ -6,6 +6,7 @@ Players = new Mongo.Collection("players");
 if (Meteor.isClient) {
   var scoreIncrement = 5;
   Session.setDefault('selectedPlayers', []);
+
   Template.leaderboard.helpers({
     players: function() {
       return Players.find({}, {
@@ -60,7 +61,7 @@ if (Meteor.isClient) {
       var index = selectedPlayers.indexOf(this._id);
       if (index !== -1) // On désélectionne le joueur
         selectedPlayers.splice(index, 1);
-      else // On le sélection
+      else // On le selection
         selectedPlayers.push(this._id);
       Session.set("selectedPlayers", selectedPlayers);
     },
@@ -68,6 +69,7 @@ if (Meteor.isClient) {
       event.stopPropagation();
       var playerName = template.data.name;
       console.log('Let\'s remove this player : ', playerName);
+      Players.remove(this._id);
     }
   });
 
@@ -76,6 +78,7 @@ if (Meteor.isClient) {
       event.preventDefault();
       var newPlayerName = template.find('input').value;
       console.log('Add a new player : ' + newPlayerName);
+      Players.insert({name: newPlayerName, score: 0});
     }
   });
 }
